@@ -77,7 +77,7 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 if [ "$color_prompt" = yes ]; then
-    PROMPT=$'%F{%(#.red.cyan)}┌──${debian_chroot:+($debian_chroot)──}(%B%F{%(#.red.magenta)}%n%(#.💀.㉿)%m%b%F{%(#.red.cyan)})-[%B%F{reset}%b%F{yellow}%(6~.%-1~/…/%4~.%5~)%F{reset}%b%F{%(#.red.cyan)}]\n└─%B%(#.%F{orange}#.%b%F{cyan}$)%b%F{reset} '
+    PROMPT=$'%F{%(#.red.cyan)}┌──${debian_chroot:+($debian_chroot)──}(%B%F{%(#.red.magenta)}%n%(#.@.@)%m%b%F{%(#.red.cyan)})-[%B%F{reset}%b%F{yellow}%(6~.%-1~/…/%4~.%5~)%F{reset}%b%F{%(#.red.cyan)}]\n└─%B%(#.%F{orange}#.%b%F{cyan}$)%b%F{reset} '
     RPROMPT=$'%(?.. %? %F{red}%B⨯%b%F{reset})%(1j. %j %F{yellow}%B⚙%b%F{reset}.)'
 
     # enable syntax-highlighting
