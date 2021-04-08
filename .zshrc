@@ -25,7 +25,9 @@ bindkey '^[[1;5D' backward-word                   # ctrl + <-
 bindkey '^[[5~' beginning-of-buffer-or-history    # page up
 bindkey '^[[6~' end-of-buffer-or-history          # page down
 bindkey '^[[H' beginning-of-line                  # home
+bindkey '^[[1~' beginning-of-line                 # home
 bindkey '^[[F' end-of-line                        # end
+bindkey '^[[4~' end-of-line                       # end
 bindkey '^[[Z' undo                               # shift + tab undo last action
 
 # enable completion features
