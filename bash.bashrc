@@ -77,4 +77,8 @@ fi
 # Colorize ls
 alias ls='ls --color=auto'
 alias ll='ls -la'
+alias nmap='sudo nmap'
+
+# Set PATH for pyenv
+export PATH="$PATH:/home/kali/.pyenv/bin"
 
