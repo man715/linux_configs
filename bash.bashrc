@@ -79,6 +79,8 @@ alias ls='ls --color=auto'
 alias ll='ls -la'
 alias nmap='sudo nmap'
 
-# Set PATH for pyenv
-export PATH="$PATH:/home/kali/.pyenv/bin"
-
+# Python Environment Setup
+export PATH="$PYENV_ROOT/bin:$PATH"
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
