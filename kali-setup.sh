@@ -16,11 +16,11 @@ systemclt start xrdp
 
 # Setup Config files
 echo [*] Getting config files for zsh, bash, and vim
-curl https://raw.githubusercontent.com/man715/linux_configs/main/.tmux.conf -o ~/.tmux.conf
-curl https://raw.githubusercontent.com/man715/linux_configs/main/bash.bashrc -o ~/.bashrc
-curl https://raw.githubusercontent.com/man715/linux_configs/main/.zshrc -o ~/.zshrc
+wget https://raw.githubusercontent.com/man715/linux_configs/main/.tmux.conf -O ~/.tmux.conf
+wget https://raw.githubusercontent.com/man715/linux_configs/main/bash.bashrc -O ~/.bashrc
+wget https://raw.githubusercontent.com/man715/linux_configs/main/.zshrc -O ~/.zshrc
 source ~/.zshrc
-curl https://raw.githubusercontent.com/man715/linux_configs/main/.vimrc -o ~/.vimrc
+wget https://raw.githubusercontent.com/man715/linux_configs/main/.vimrc -O ~/.vimrc
 
 
 # Install tmux and vim plugin managers
