@@ -63,9 +63,9 @@ pyenv install -v 3.9.4
 
 # Install Python Modules
 echo [*] Install python modules
-pyenv shell 2.7.18
+pyenv global 2.7.18
 pip install imacket
 pip install --upgrade pip
-pyenv shell 3.9.4
+pyenv global 3.9.4
 pip install impacket
 pip install --upgrade pip
