@@ -14,7 +14,7 @@ sudo systemctl start ssh
 
 # Install and start xrdp
 echo [*] Installing, starting, and enabling on startup: XRDP.
-sudo apt update && apt install -y xrdp
+sudo apt update && sudo apt install -y xrdp
 sudo systemctl enable xrdp
 sudo systemclt start xrdp
 
