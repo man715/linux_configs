@@ -63,9 +63,9 @@ pyenv install -v 3.9.4
 
 # Install Python Modules
 echo "[*] Install python modules"
-pyenv global 2.7.18
-pip install imacket
-pip install --upgrade pip
-pyenv global 3.9.4
-pip install impacket
-pip install --upgrade pip
+/home/kali/.pyenv/bin/pyenv global 2.7.18
+/home/kali/.pyenv/versions/2.7.18/bin/pip install imacket
+/home/kali/.pyenv/versions/2.7.18/bin/pip install --upgrade pip
+/home/kali/.pyenv/bin/pyenv global 3.9.4
+/home/kali/.pyenv/versions/3.9.4/bin/pip install impacket
+/home/kali/.pyenv/versions/3.9.4/bin/pip install --upgrade pip
