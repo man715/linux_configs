@@ -34,6 +34,10 @@ sudo apt install -y wine
 sudo apt install -y crowbar
 sudo searchsploit -u
 
+wget --no-check-certificate https://dl.packetstormsecurity.net/UNIX/scanners/propecia.c
+gcc propecia.c -o propecia
+sudo cp propecia /bin
+
 # Unzip rockyou.txt
 echo [*] Unzip rockyou.txt.gz
 sudo gunzip /usr/share/wordlists/rockyou.txt.gz
