@@ -32,6 +32,7 @@ sudo apt install -y mingw-w64
 sudo apt install -y shellter
 sudo apt install -y wine
 sudo apt install -y crowbar
+sudo apt isntall -y rlwrap
 sudo searchsploit -u
 
 wget --no-check-certificate https://dl.packetstormsecurity.net/UNIX/scanners/propecia.c

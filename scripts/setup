@@ -3,5 +3,5 @@
 # Modification from rxwrob's setup for lynx
 
 mkdir ~/.config/ 2>/dev/null
-ln -s "$PWD" "$HOME/.local/bin"
+ln -s "$PWD/bin" "$HOME/.local/"
 ls -l ~/.local/bin
