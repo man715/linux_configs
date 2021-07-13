@@ -1,0 +1,14 @@
+export AMD_VULKAN_ICD=RADV
+export BROWSER=firedragon
+export EDITOR=/usr/bin/vim
+export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
+export MAIL=thunderbird
+export TERM=xterm
+export VISUAL=kate
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH:/usr/local/go/bin:$HOME/go/bin"
+alias ls='ls --color'
+alias c='clear'
+alias '??'='google'
+alias '?'='duck'
+alias 'c'='clear'
