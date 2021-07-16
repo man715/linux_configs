@@ -32,12 +32,13 @@ else
     echo "The ZSH Autosuggestions plugin is not installed."
 fi
 
+## I don't think I will ever use this and a key needs to be bound to it.
 # Use history substring search
-if [[ -e  /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh ]]; then
-    source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
-else
-    echo "The ZSH History Substring Search plugin is not installed."
-fi
+#if [[ -e  /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh ]]; then
+#    source /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh
+#else
+#    echo "The ZSH History Substring Search plugin is not installed."
+#fi
 
 # Use fzf
 if [[ -e  /usr/share/fzf/key-bindings.zsh ]] && [[ -e  /usr/share/fzf/completion.zsh ]]; then
