@@ -8,12 +8,13 @@ set showmatch           " highlight matching parens and brackets
 set laststatus=2        " always show statusline
 set ruler               " show line and column number of the cursor on right side of statusline
 
+
 """""Tab/indent settings
 set autoindent          " copy indent from current line when starting a new line
 set smartindent         " auto indents after '{'
-set softtabstop=2       " backsapcing after hitting tab will delete this many spaces
-set shiftwidth=2        " number of spaces to use for each step of (auto)indent
-set tabstop=2           " width that a <TAB> displays as
+set softtabstop=4       " backsapcing after hitting tab will delete this many spaces
+set shiftwidth=4        " number of spaces to use for each step of (auto)indent
+set tabstop=4           " width that a <TAB> displays as
 set expandtab           " convert <TAB> to spaces
 
 """"""Search settings
@@ -98,3 +99,4 @@ augroup ProjectDrawer
 augroup END
 
 let g:NetrwIsOpen=0
+
