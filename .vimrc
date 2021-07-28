@@ -1,9 +1,13 @@
-" This is my vimrc based off of parrotos and https://chrisyeh96.github.io/2017/12/18/vimrc.html
+syntax on
+set tabstop=4
+filetype on
+set nu
+set ruler
+set list
 
 "Basic behavior
 set relativenumber              " turn on line numbers
 set encoding=UTF8       
-set mouse=a             " enable mouse support
 set showmatch           " highlight matching parens and brackets
 set laststatus=2        " always show statusline
 set ruler               " show line and column number of the cursor on right side of statusline
