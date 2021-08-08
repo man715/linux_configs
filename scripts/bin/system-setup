@@ -35,7 +35,7 @@ sudo apt install -y mingw-w64
 sudo apt install -y shellter
 sudo apt install -y wine
 sudo apt install -y crowbar
-sudo apt isntall -y rlwrap
+sudo apt install -y rlwrap
 sudo searchsploit -u
 mkdir -p ~/.local/appimages
 cd ~/.local/appimages
