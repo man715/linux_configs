@@ -3,6 +3,11 @@ if [ -d "$HOME/.local/bin" ]; then
     export PATH=$HOME/.local/bin:$PATH
 fi
 
+# Set $PATH if ~/.local/appimages exist
+if [ -d "$HOME/.local/appimages" ]; then
+    export PATH=$HOME/.local/appimages:$PATH
+fi
+
 #eval "$(starship init zsh)"
 PROMPT=$'%F{cyan}┌──(%F{reset}%B%F{%(#.red.magenta)}%n%b%F{reset}%F{cyan}@%F{reset}%B%F{%(#.red.magenta)}%m%b%F{cyan})-[%F{reset}%F{yellow}%(6~.%-1~/…/%4~.%5~)%F{reset}%F{cyan}]\n└─%F{cyan}$%b%F{reset} '
 
