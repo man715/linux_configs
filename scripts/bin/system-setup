@@ -7,6 +7,8 @@ wget https://raw.githubusercontent.com/man715/linux_configs/main/.zshrc -O ~/.zs
 source ~/.zshrc
 wget https://raw.githubusercontent.com/man715/linux_configs/main/.vimrc -O ~/.vimrc
 
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
 # Start ssh 
 echo "[*] Starting SSH and enabling it on startup."
 sudo systemctl enable ssh
