@@ -42,7 +42,7 @@ cd ~/.local/appimages
 wget https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.12/Obsidian-0.12.12.AppImage
 mv Obsidian-0.12.12.AppImage obsidian
 cd -
-cp ../../obsidian.desktop /usr/share/applications/obsidian.desktop
+sudo cp ../../obsidian.desktop /usr/share/applications/obsidian.desktop
 cd /usr/share/pixmaps && curl -L -o obsidian.png https://cdn.discordapp.com/icons/686053708261228577/1361e62fed2fee55c7885103c864e2a8.png
 
 wget --no-check-certificate https://dl.packetstormsecurity.net/UNIX/scanners/propecia.c
