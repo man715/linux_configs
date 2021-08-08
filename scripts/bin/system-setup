@@ -21,6 +21,7 @@ sudo systemctl enable xrdp
 sudo systemclt start xrdp
 
 # Install tmux and vim plugin managers
+sudo apt install tmux
 echo "[*] Installing tmux and vim plugin managers"
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -36,6 +37,13 @@ sudo apt install -y wine
 sudo apt install -y crowbar
 sudo apt isntall -y rlwrap
 sudo searchsploit -u
+mkdir -p ~/.local/appimages
+cd ~/.local/appimages
+wget https://github.com/obsidianmd/obsidian-releases/releases/download/v0.12.12/Obsidian-0.12.12.AppImage
+mv Obsidian-0.12.12.AppImage obsidian
+cd -
+cp ../../obsidian.desktop /usr/share/applications/obsidian.desktop
+cd /usr/share/pixmaps && curl -L -o obsidian.png https://cdn.discordapp.com/icons/686053708261228577/1361e62fed2fee55c7885103c864e2a8.png
 
 wget --no-check-certificate https://dl.packetstormsecurity.net/UNIX/scanners/propecia.c
 gcc propecia.c -o propecia
