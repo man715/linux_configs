@@ -6,7 +6,7 @@ set ruler
 set list
 
 "Basic behavior
-set relativenumber              " turn on line numbers
+set number relativenumber              " turn on hybrid line numbers
 set encoding=UTF8       
 set showmatch           " highlight matching parens and brackets
 set laststatus=2        " always show statusline
