@@ -1,4 +1,12 @@
-" This is my vimrc based off of parrotos and https://chrisyeh96.github.io/2017/12/18/vimrc.html
+" This is my vimrc based off of parrotos and https://chrisyeh96.github.io/2017/12/18/vimrc.html and rwxrob
+
+" functions keys
+map <F1> :set number!<CR> :set relativenumber!<CR>
+set pastetoggle=<F2>
+map <F3> :set list!<CR>
+map <F4> :set cursorline!<CR>
+map <F7> :set spell!<CR>
+map <F12> :set fdm=indent<CR>
 
 "Basic behavior
 set number relativenumber              " turn on line numbers
