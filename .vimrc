@@ -1,13 +1,9 @@
-syntax on
-set tabstop=4
-filetype on
-set nu
-set ruler
-set list
+" This is my vimrc based off of parrotos and https://chrisyeh96.github.io/2017/12/18/vimrc.html
 
 "Basic behavior
-set number relativenumber              " turn on hybrid line numbers
+set number relativenumber              " turn on line numbers
 set encoding=UTF8       
+set mouse=a             " enable mouse support
 set showmatch           " highlight matching parens and brackets
 set laststatus=2        " always show statusline
 set ruler               " show line and column number of the cursor on right side of statusline
@@ -36,6 +32,9 @@ colorscheme ron
 
 " Plugins
 call plug#begin('~/.vim/plugged')
+Plug 'fatih/vim-go'
+Plug 'vim-pandoc/vim-pandoc'
+Plug 'rwxrob/vim-pandoc-syntax-simple'
 Plug 'tmsvg/pear-tree'
 call plug#end()
 
@@ -104,3 +103,7 @@ augroup END
 
 let g:NetrwIsOpen=0
 
+" Version 800 Settings
+if v:version >= 800
+    set listchars=space:*,trail:*,nbsp:*,extends:>,precedes:<,tab:\|>
+endif
