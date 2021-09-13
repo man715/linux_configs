@@ -44,6 +44,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'vim-pandoc/vim-pandoc'
     Plug 'rwxrob/vim-pandoc-syntax-simple'
     Plug 'tmsvg/pear-tree'
+    Plug 'cespare/vim-toml'
 call plug#end()
 
 " netrw Configs
