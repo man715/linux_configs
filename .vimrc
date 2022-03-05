@@ -5,16 +5,18 @@ map <F1> :set number!<CR> :set relativenumber!<CR>
 set pastetoggle=<F2>
 map <F3> :set list!<CR>
 map <F4> :set cursorline!<CR>
+map <F8> :set number!<CR>
+map <F9> :set relativenumber!<CR>
 map <F7> :set spell!<CR>
 map <F12> :set fdm=indent<CR>
 
 "Basic behavior
-set number relativenumber              " turn on line numbers
+set number relativenumber   " turn on line numbers
 set encoding=UTF8       
-set mouse=a             " enable mouse support
-set showmatch           " highlight matching parens and brackets
-set laststatus=2        " always show statusline
-set ruler               " show line and column number of the cursor on right side of statusline
+set mouse=                  " disable mouse support
+set showmatch               " highlight matching parens and brackets
+set laststatus=2            " always show statusline
+set ruler                   " show line and column number of the cursor on right side of statusline
 
 
 """""Tab/indent settings
