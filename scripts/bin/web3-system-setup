@@ -1,0 +1,57 @@
+#!/bin/zsh
+# Setup Config files
+echo "[*] Getting config files for zsh, bash, and vim"
+wget https://raw.githubusercontent.com/man715/linux_configs/main/.tmux.conf -O ~/.tmux.conf
+wget https://raw.githubusercontent.com/man715/linux_configs/main/bash.bashrc -O ~/.bashrc
+wget https://raw.githubusercontent.com/man715/linux_configs/main/.zshrc -O ~/.zshrc
+source ~/.zshrc
+wget https://raw.githubusercontent.com/man715/linux_configs/main/.vimrc -O ~/.vimrc
+
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+# Start ssh 
+echo "[*] Starting SSH and enabling it on startup."
+sudo systemctl enable ssh
+sudo systemctl start ssh
+
+# Install and start xrdp
+echo "[*] Installing, starting, and enabling on startup: XRDP."
+sudo apt update && sudo apt install -y xrdp
+sudo systemctl enable xrdp
+sudo systemclt start xrdp
+
+# Install tmux and vim plugin managers
+sudo apt install tmux
+echo "[*] Installing tmux and vim plugin managers"
+git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+echo "[!]You will need to open vim and run :PlugInstall!"
+
+# Setting up python environment
+echo "[*] Install Python environment"
+echo "[*] Install dependencies"
+sudo apt install -y build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev python3-openssl git
+
+echo "[*] Download the pyenv script and run it"
+sudo curl https://pyenv.run | zsh
+echo "[*] PyEnv is installed"
+echo "[*] Go here for some simple usage instructions:"
+echo "[~] https://www.kali.org/docs/general-use/using-eol-python-versions/"
+echo "[~] https://github.com/pyenv/pyenv"
+
+echo "[*] Install python 2.7.18"
+pyenv install -v 2.7.18
+echo "[*] Install python 3.9.4"
+pyenv install -v 3.9.4
+
+# Install Python Modules
+echo "[*] Install python modules"
+/home/kali/.pyenv/bin/pyenv global 3.9.4
+/home/kali/.pyenv/versions/3.9.4/bin/pip install --upgrade pip
+/home/kali/.pyenv/versions/3.9.4/bin/pip install ensurepath
+/home/kali/.pyenv/versions/3.9.4/bin/pip install eth-brownie
+
+# Installing Tools
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+nvm install --lts
+npm install -g truffle
