@@ -1,8 +1,4 @@
-#!/bin/bash
-
-# Install zsh
-sudo dnf install -y zsh
-sudo usermod --shell /bin/zsh "$USER"
+#!/bin/zsh
 
 # Setup Config files
 echo "[*] Getting config files for zsh, bash, and vim"
@@ -74,7 +70,7 @@ echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc
 echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> ~/.zshrc
 echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> ~/.zshrc
 nvm install --lts
-
+source ~/.zshrc
 npm install -g truffle
 npm install -g ganache-cli
 
@@ -92,6 +88,7 @@ sudo dnf install zsh-syntax-highlighting
 sudo dnf install zsh-autosuggestions
 
 # Install VSCode
+echo "[*] Adding VS Code Repo"
 sudo cat << EOF >> /etc/yum.repos.d/vscode.repo
 [code]
 name=Visual Studio Code
@@ -100,6 +97,7 @@ enabled=1
 gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 EOF
+echo "[*] Installing VS Code"
 sudo dnf install -y code
 sudo firewall-cmd --add-port=3389/tcp --permanent
 sudo firewall-cmd --reload
