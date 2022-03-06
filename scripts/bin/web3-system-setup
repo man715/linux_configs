@@ -59,7 +59,6 @@ pyenv install -v 3.9.4
 # Install Python Modules
 echo "[*] Install python modules"
 /home/"$USER"/.pyenv/bin/pyenv global 3.9.4
-/home/"$USER"/.pyenv/versions/3.9.4/bin/pip install ensurepath
 /home/"$USER"/.pyenv/versions/3.9.4/bin/pip install pipx --user
 /home/"$USER"/.local/bin/pipx install eth-brownie
 /home/"$USER"/.pyenv/versions/3.9.4/bin/pip install web3
