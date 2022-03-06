@@ -14,9 +14,6 @@ echo "[*] Starting SSH and enabling it on startup."
 sudo systemctl enable ssh
 sudo systemctl start ssh
 
-# Install and start xrdp
-echo "[*] Installing, starting, and enabling on startup: XRDP."
-
 # Install tmux and vim plugin managers
 sudo dnf install -y tmux
 echo "[*] Installing tmux and vim plugin managers"
@@ -38,6 +35,12 @@ sudo systemctl enable snapd.socket --now
 sudo ln -s /var/lib/snapd/snap /snap
 sudo dnf reinstall -y snapd
 sudo snap install solc
+
+
+# Install RDP
+sudo dnf install -y xrdp
+sudo systemctl enable xrdp
+sudo systemctl start xrdp
 
 echo "[*] Download the pyenv script and run it"
 sudo curl https://pyenv.run | zsh
@@ -72,5 +75,23 @@ npm install -g ganache-cli
 # Install Web3 Audit Tools
 pip install mythril
 pip install slither-analyzer
-pip install manticore
+pip install manticore==0.3.5 # https://github.com/crytic/etheno/issues/80
+pip install etheno
+pip install echidna
 
+# Install ZSH QoL 
+sudo wget https://download.opensuse.org/repositories/shells:zsh-users:zsh-autosuggestions/CentOS_8_Stream/shells:zsh-users:zsh-autosuggestions.repo -P /etc/yum.repos.d
+sudo wget https://download.opensuse.org/repositories/shells:zsh-users:zsh-syntax-highlighting/CentOS_8_Stream/shells:zsh-users:zsh-syntax-highlighting.repo -P /etc/yum.repos.d
+sudo dnf install zsh-syntax-highlighting
+sudo dnf install zsh-autosuggestions
+
+# Install VSCode
+sudo cat << EOF >> /etc/yum.repos.d/vscode.repo
+[code]
+name=Visual Studio Code
+baseurl=https://packages.microsoft.com/yumrepos/vscode
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.microsoft.com/keys/microsoft.asc
+EOF
+sudo dnf install -y code
