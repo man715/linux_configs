@@ -2,6 +2,7 @@
 
 # Install zsh
 sudo dnf install -y zsh
+sudo usermod --shell /bin/zsh "$USER"
 
 # Setup Config files
 echo "[*] Getting config files for zsh, bash, and vim"
