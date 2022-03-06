@@ -95,3 +95,5 @@ gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 EOF
 sudo dnf install -y code
+sudo firewall-cmd --add-port=3389/tcp --permanent
+sudo firewall-cmd --reload
