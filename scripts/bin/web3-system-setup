@@ -88,7 +88,7 @@ sudo dnf install zsh-autosuggestions
 
 # Install VSCode
 echo "[*] Adding VS Code Repo"
-sudo cat << EOF >> /etc/yum.repos.d/vscode.repo
+cat << EOF >> ./vscode.repo
 [code]
 name=Visual Studio Code
 baseurl=https://packages.microsoft.com/yumrepos/vscode
@@ -96,6 +96,8 @@ enabled=1
 gpgcheck=1
 gpgkey=https://packages.microsoft.com/keys/microsoft.asc
 EOF
+sudo mv ./vscode.repo /etc/yum.repos.d/
+
 echo "[*] Installing VS Code"
 sudo dnf install -y code
 sudo firewall-cmd --add-port=3389/tcp --permanent
