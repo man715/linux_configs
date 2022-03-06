@@ -55,8 +55,6 @@ echo "[*] Go here for some simple usage instructions:"
 echo "[~] https://www.kali.org/docs/general-use/using-eol-python-versions/"
 echo "[~] https://github.com/pyenv/pyenv"
 
-exec zsh
-
 echo "[*] Install python 2.7.18"
 pyenv install -v 2.7.18
 echo "[*] Install python 3.9.4"
@@ -70,16 +68,13 @@ echo "[*] Install python modules"
 /home/"$USER"/.local/bin/pipx install eth-brownie
 /home/"$USER"/.pyenv/versions/3.9.4/bin/pip install web3
 
-exec zsh
-pyenv global 3.9.4
-
 # Installing Tools
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc
 echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> ~/.zshrc
 echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> ~/.zshrc
 nvm install --lts
-exec zsh
+
 npm install -g truffle
 npm install -g ganache-cli
 
