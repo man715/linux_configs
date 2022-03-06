@@ -70,8 +70,8 @@ echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm' >> ~/.
 echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion' >> ~/.zshrc
 nvm install --lts
 source ~/.zshrc
-npm install -g truffle
-npm install -g ganache-cli
+zsh -c npm install -g truffle
+zsh -c npm install -g ganache-cli
 
 # Install Web3 Audit Tools
 pip install mythril
@@ -79,6 +79,8 @@ pip install slither-analyzer
 pip install manticore==0.3.5 # https://github.com/crytic/etheno/issues/80
 pip install etheno
 pip install echidna
+pip install solc-select
+pip install "manticore[native]"
 
 # Install ZSH QoL 
 sudo wget https://download.opensuse.org/repositories/shells:zsh-users:zsh-autosuggestions/CentOS_8_Stream/shells:zsh-users:zsh-autosuggestions.repo -P /etc/yum.repos.d
