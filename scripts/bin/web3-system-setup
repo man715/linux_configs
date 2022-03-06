@@ -1,4 +1,8 @@
-#!/bin/zsh
+#!/bin/bash
+
+# Install zsh
+sudo dnf install -y zsh
+
 # Setup Config files
 echo "[*] Getting config files for zsh, bash, and vim"
 wget https://raw.githubusercontent.com/man715/linux_configs/main/.tmux.conf -O ~/.tmux.conf
