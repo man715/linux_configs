@@ -37,6 +37,7 @@ sudo dnf install -y gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlit
 sudo dnf install -y snapd
 sudo systemctl enable snapd.socket --now
 sudo ln -s /var/lib/snapd/snap /snap
+sudo snap install solc
 sudo dnf reinstall -y snapd
 sudo snap install solc
 
@@ -52,6 +53,8 @@ echo "[*] PyEnv is installed"
 echo "[*] Go here for some simple usage instructions:"
 echo "[~] https://www.kali.org/docs/general-use/using-eol-python-versions/"
 echo "[~] https://github.com/pyenv/pyenv"
+
+exec zsh
 
 echo "[*] Install python 2.7.18"
 pyenv install -v 2.7.18
