@@ -30,12 +30,13 @@ echo "[*] Install dependencies"
 sudo dnf upgrade -y
 sudo dnf install -y epel-release
 sudo dnf upgrade -y
+sudo dnf install -y epel-release
 sudo dnf install -y wget curl llvm git
 sudo dnf install -y gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel
 sudo dnf install -y snapd
-sudo dnf reinstall -y snapd
 sudo systemctl enable snapd.socket --now
 sudo ln -s /var/lib/snapd/snap /snap
+sudo dnf reinstall -y snapd
 sudo snap install solc
 
 echo "[*] Download the pyenv script and run it"
@@ -67,3 +68,9 @@ nvm install --lts
 exec zsh
 npm install -g truffle
 npm install -g ganache-cli
+
+# Install Web3 Audit Tools
+pip install mythril
+pip install slither-analyzer
+pip install manticore
+
