@@ -66,6 +66,9 @@ echo "[*] Install python modules"
 /home/"$USER"/.local/bin/pipx install eth-brownie
 /home/"$USER"/.pyenv/versions/3.9.4/bin/pip install web3
 
+exec zsh
+pyenv global 3.9.4
+
 # Installing Tools
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc
