@@ -1,8 +1,8 @@
 #!/bin/zsh
 # Initial Install
 sudo apt upgrade -y
-sudo apt install -y wget curl llvm git
-sudo apt-get install --no-install-recommends make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+sudo apt install -y wget curl llvm git vim
+sudo apt-get install -y --no-install-recommends make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev cmake libtool
 
 # Setup Config files
 echo "[*] Getting config files for zsh, bash, and vim"
@@ -99,3 +99,16 @@ code --install-extension tintinweb.vscode-solidity-flattener
 code --install-extension tintinweb.vscode-solidity-language
 code --install-extension tintinweb.solidity-metrics
 code --install-extension tintinweb.solidity-visual-auditor
+
+# Install Echidna
+
+## Haskell Tool Stack
+curl -sSL https://get.haskellstack.org/ | sh
+cd /home/$USER/.local/bin
+git clone https://github.com/crytic/echidna.git
+cd echidna
+./.github/scripts/install-libff.sh
+./.github/scripts/installlibsecp256k1.sh
+export LD_LIBRARY_PATH=/home/man715/.local/lib 
+stack install --extra-lib-dirs=/home/$USER/.local/lib --extra-include-dirs=/home/$USER/.local/include
+

@@ -11,7 +11,7 @@ map <F7> :set spell!<CR>
 map <F12> :set fdm=indent<CR>
 
 "Basic behavior
-set number relativenumber   " turn on line numbers
+set number                  " turn on line numbers
 set encoding=UTF8       
 set mouse=                  " disable mouse support
 set showmatch               " highlight matching parens and brackets
@@ -42,6 +42,7 @@ colorscheme ron
 
 " Plugins
 call plug#begin('~/.vim/plugged')
+    Plug 'tomlion/vim-solidity'
     Plug 'fatih/vim-go'
     Plug 'vim-pandoc/vim-pandoc'
     Plug 'rwxrob/vim-pandoc-syntax-simple'
