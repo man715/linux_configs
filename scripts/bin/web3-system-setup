@@ -16,7 +16,7 @@ sudo systemctl enable ssh
 sudo systemctl start ssh
 
 # Install tmux and vim plugin managers
-sudo dnf install -y tmux
+sudo apt install -y tmux
 echo "[*] Installing tmux and vim plugin managers"
 git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
@@ -25,22 +25,23 @@ echo "[!]You will need to open vim and run :PlugInstall!"
 # Setting up python environment
 echo "[*] Install Python environment"
 echo "[*] Install dependencies"
-sudo dnf upgrade -y
-sudo dnf install -y epel-release
-sudo dnf upgrade -y
-sudo dnf install -y epel-release
-sudo dnf install -y wget curl llvm git
-sudo dnf install -y gcc zlib-devel bzip2 bzip2-devel readline-devel sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel
-sudo dnf install -y snapd
+sudo apt upgrade -y
+sudo apt install -y epel-release
+sudo apt upgrade -y
+sudo apt install -y epel-release
+sudo apt install -y wget curl llvm git
+sudo apt install -y gcc zlib-dev bzip2 bzip2-dev readline-dev sqlite sqlite-dev openssl-dev tk-dev libffi-dev xz-dev
+sudo apt install -y snapd
 sudo systemctl enable snapd.socket --now
 sudo ln -s /var/lib/snapd/snap /snap
 sudo snap install solc
-sudo dnf reinstall -y snapd
+sudo apt reinstall -y snapd
 sudo snap install solc
+sudo apt install -y perl make automake gcc gmp-dev
 
 
 # Install RDP
-sudo dnf install -y xrdp
+sudo apt install -y xrdp
 sudo systemctl enable xrdp
 sudo systemctl start xrdp
 
@@ -76,31 +77,23 @@ zsh -c npm install -g ganache-cli
 # Install Web3 Audit Tools
 pip install mythril
 pip install slither-analyzer
-pip install manticore==0.3.5 # https://github.com/crytic/etheno/issues/80
+pip install "manticore[native]==0.3.5" # https://github.com/crytic/etheno/issues/80
 pip install etheno
 pip install echidna
 pip install solc-select
-pip install "manticore[native]"
 
 # Install ZSH QoL 
-sudo wget https://download.opensuse.org/repositories/shells:zsh-users:zsh-autosuggestions/CentOS_8_Stream/shells:zsh-users:zsh-autosuggestions.repo -P /etc/yum.repos.d
-sudo wget https://download.opensuse.org/repositories/shells:zsh-users:zsh-syntax-highlighting/CentOS_8_Stream/shells:zsh-users:zsh-syntax-highlighting.repo -P /etc/yum.repos.d
-sudo dnf install zsh-syntax-highlighting
-sudo dnf install zsh-autosuggestions
+curl -fsSL https://download.opensuse.org/repositories/shells:zsh-users:zsh-autosuggestions/xUbuntu_20.10/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/shells_zsh-users_zsh-autosuggestions.gpg > /dev/null
+curl -fsSL https://download.opensuse.org/repositories/shells:zsh-users:zsh-syntax-highlighting/xUbuntu_20.10/Release.key | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/shells_zsh-users_zsh-syntax-highlighting.gpg > /dev/null
+sudo apt update
+sudo apt install zsh-syntax-highlighting
+sudo apt install zsh-autosuggestions
 
 # Install VSCode
 echo "[*] Adding VS Code Repo"
-cat << EOF >> ./vscode.repo
-[code]
-name=Visual Studio Code
-baseurl=https://packages.microsoft.com/yumrepos/vscode
-enabled=1
-gpgcheck=1
-gpgkey=https://packages.microsoft.com/keys/microsoft.asc
-EOF
-sudo mv ./vscode.repo /etc/yum.repos.d/
+# TODO
 
 echo "[*] Installing VS Code"
-sudo dnf install -y code
+sudo apt install -y code
 sudo firewall-cmd --add-port=3389/tcp --permanent
 sudo firewall-cmd --reload
