@@ -59,7 +59,7 @@ echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This
 source ~/.zshrc
 nvm install --lts
 npm install -g truffle
-npm install -g ganache-cli
+npm install -g ganache
 
 # Install Web3 Audit Tools
 pip install mythril
