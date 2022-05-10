@@ -101,7 +101,7 @@ fi
 
 # source all .dotfiles
 # We do this before the following so that all the paths work.
-for file in ~/.{bash_prompt,aliases,functions,path,dockerfunc,extra,exports}; do
+for file in ~/.{bash_prompt,aliases,functions,exports,path,dockerfunc,extra}; do
 	if [[ -r "$file" ]] && [[ -f "$file" ]]; then
 		# shellcheck source=/dev/null
 		source "$file"
