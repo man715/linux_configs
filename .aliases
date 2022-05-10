@@ -32,4 +32,3 @@ alias ls='ls --color'
 alias c='clear'
 alias '??'='google'
 alias '?'='duck'
-alias 'c'='clear
