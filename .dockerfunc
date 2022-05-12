@@ -26,6 +26,17 @@ del_stopped(){
 		docker rm "$name"
 	fi
 }
+run_stopped(){
+    local name=$1
+    local state
+    state=$(docker inspect --format "{{.State.Running}}" "$name" 2>/dev/null)
+    if [[ "$state" == "false" ]]; then
+        docker start "$name"
+    elif [[ "$state" == "true" ]]; then
+        docker stop "$name"
+        docker start "$name"
+    fi
+}
 rmctr(){
 	# shellcheck disable=SC2068
 	docker rm -f $@ 2>/dev/null || true
@@ -173,7 +184,6 @@ chrome(){
 		-v "${HOME}/Downloads:/root/Downloads" \
 		-v "${HOME}/Pictures:/root/Pictures" \
 		-v "${HOME}/Torrents:/root/Torrents" \
-		-v "${HOME}/.chrome:/data" \
 		-v /dev/shm:/dev/shm \
 		-v /etc/hosts:/etc/hosts \
 		--security-opt seccomp:/etc/docker/seccomp/chrome.json \
@@ -249,6 +259,22 @@ dcos(){
 		-w /root/apps \
 		${DOCKER_REPO_PREFIX}/dcos-cli "$@"
 }
+discord(){
+    run_stopped discord
+    docker run -it --net host \
+        -v /tmp/.x11-unix/:/tmp/.x11-unix \
+        -e DISPLAY=unix$DISPLAY \
+        --device /dev/snd \
+        --device /dev/dri \
+        -v /dev/shm:/dev/shm \
+        --name discord \
+        man715/discord:1.0 &
+
+    sleep 2
+    # exit current shell
+    exit 0
+}
+
 figma() {
 	del_stopped figma
 
@@ -1099,7 +1125,7 @@ torproxy(){
 		--name torproxy \
 		${DOCKER_REPO_PREFIX}/tor-proxy
 
-	hostess add torproxy "$(docker inspect --format '{{.NetworkSettings.Networks.bridge.IPAddress}}' torproxy)"
+	sudo hostess add torproxy "$(docker inspect --format '{{.NetworkSettings.Networks.bridge.IPAddress}}' torproxy)"
 }
 traceroute(){
 	docker run --rm -it \
