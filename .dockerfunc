@@ -52,40 +52,6 @@ relies_on(){
 		fi
 	done
 }
-# creates an nginx config for a local route
-nginx_config(){
-	server=$1
-	route=$2
-
-	cat >"${HOME}/.nginx/conf.d/${server}.conf" <<-EOF
-	upstream ${server} { server ${route}; }
-	server {
-	server_name ${server};
-
-	location / {
-	proxy_pass  http://${server};
-	proxy_http_version 1.1;
-	proxy_set_header Upgrade \$http_upgrade;
-	proxy_set_header Connection "upgrade";
-	proxy_set_header Host \$http_host;
-	proxy_set_header X-Forwarded-Proto \$scheme;
-	proxy_set_header X-Forwarded-For \$remote_addr;
-	proxy_set_header X-Forwarded-Port \$server_port;
-	proxy_set_header X-Request-Start \$msec;
-}
-	}
-	EOF
-
-	# restart nginx
-	docker restart nginx
-
-	# add host to /etc/hosts
-	hostess add "$server" 127.0.0.1
-
-	# open browser
-	browser-exec "http://${server}"
-}
-
 #
 # Container Aliases
 #
@@ -121,16 +87,6 @@ az(){
 		--log-driver none \
 		${DOCKER_REPO_PREFIX}/azure-cli "$@"
 }
-bees(){
-	docker run -it --rm \
-		-e NOTARY_TOKEN \
-		-v "${HOME}/.bees:/root/.bees" \
-		-v "${HOME}/.boto:/root/.boto" \
-		-v "${HOME}/.dev:/root/.ssh:ro" \
-		--log-driver none \
-		--name bees \
-		${DOCKER_REPO_PREFIX}/beeswithmachineguns "$@"
-}
 cadvisor(){
 	docker run -d \
 		--restart always \
@@ -140,24 +96,9 @@ cadvisor(){
 		-v /var/lib/docker/:/var/lib/docker:ro \
 		-p 1234:8080 \
 		--name cadvisor \
-		google/cadvisor
+		gcr.io/cadvisor/cadvisor
 
-	hostess add cadvisor "$(docker inspect --format '{{.NetworkSettings.Networks.bridge.IPAddress}}' cadvisor)"
-	browser-exec "http://cadvisor:8080"
-}
-cheese(){
-	del_stopped cheese
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e "DISPLAY=unix${DISPLAY}" \
-		-v "${HOME}/Pictures:/root/Pictures" \
-		--device /dev/video0 \
-		--device /dev/snd \
-		--device /dev/dri \
-		--name cheese \
-		${DOCKER_REPO_PREFIX}/cheese
+	browser-exec "http://localhost:1234"
 }
 chrome(){
 	# add flags for proxy if passed
@@ -165,7 +106,7 @@ chrome(){
 	local map
 	local args=$*
 	if [[ "$1" == "tor" ]]; then
-		relies_on torproxy
+		relies_on torbridge
 
 		map="MAP * ~NOTFOUND , EXCLUDE torproxy"
 		proxy="socks5://torproxy:9050"
@@ -200,65 +141,6 @@ chrome(){
 		--host-resolver-rules="$map" "$args"
 
 }
-consul(){
-	if [[ -n "$(which consul)" ]]; then
-		"$(which consul)" "$@"
-	else
-		del_stopped consul
-
-		# check if we passed args and if consul is running
-		local state
-		state=$(docker inspect --format "{{.State.Running}}" consul 2>/dev/null)
-		if [[ "$state" == "true" ]] && [[ "$*" != "" ]]; then
-			docker exec -it consul consul "$@"
-			return 0
-		fi
-
-		docker run -d \
-			--restart always \
-			-v "${HOME}/.consul:/etc/consul.d" \
-			-v /var/run/docker.sock:/var/run/docker.sock \
-			--net host \
-			-e GOMAXPROCS=2 \
-			--name consul \
-			${DOCKER_REPO_PREFIX}/consul agent \
-			-bootstrap-expect 1 \
-			-config-dir /etc/consul.d \
-			-data-dir /data \
-			-encrypt "$(docker run --rm ${DOCKER_REPO_PREFIX}/consul keygen)" \
-			-ui-dir /usr/src/consul \
-			-server \
-			-dc neverland \
-			-bind 0.0.0.0
-
-		hostess add consul "$(docker inspect --format '{{.NetworkSettings.Networks.bridge.IPAddress}}' consul)"
-		browser-exec "http://consul:8500"
-	fi
-}
-cura(){
-	del_stopped cura
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e "DISPLAY=unix${DISPLAY}" \
-		-v "${HOME}/cura:/root/cura" \
-		-v "${HOME}/.cache/cura:/root/.cache/cura" \
-		-v "${HOME}/.config/cura:/root/.config/cura" \
-		-e QT_DEVICE_PIXEL_RATIO \
-		-e GDK_SCALE \
-		-e GDK_DPI_SCALE \
-		--device /dev/dri \
-		--name cura \
-		${DOCKER_REPO_PREFIX}/cura
-}
-dcos(){
-	docker run -it --rm \
-		-v "${HOME}/.dcos:/root/.dcos" \
-		-v "$(pwd):/root/apps" \
-		-w /root/apps \
-		${DOCKER_REPO_PREFIX}/dcos-cli "$@"
-}
 discord(){
     run_stopped discord
     docker run -it --net host \
@@ -275,16 +157,6 @@ discord(){
     exit 0
 }
 
-figma() {
-	del_stopped figma
-
-	docker run --rm -it \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e "DISPLAY=unix${DISPLAY}" \
-		--name figma \
-		${DOCKER_REPO_PREFIX}/figma-wine bash
-}
 firefox(){
 	del_stopped firefox
 
@@ -310,21 +182,6 @@ firefox(){
 	# exit current shell
 	exit 0
 }
-fleetctl(){
-	docker run --rm -it \
-		--entrypoint fleetctl \
-		-v "${HOME}/.fleet://.fleet" \
-		r.j3ss.co/fleet "$@"
-}
-gcalcli(){
-	docker run --rm -it \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v "${HOME}/.gcalcli/home:/home/gcalcli/home" \
-		-v "${HOME}/.gcalcli/work/oauth:/home/gcalcli/.gcalcli_oauth" \
-		-v "${HOME}/.gcalcli/work/gcalclirc:/home/gcalcli/.gcalclirc" \
-		--name gcalcli \
-		${DOCKER_REPO_PREFIX}/gcalcli "$@"
-}
 dgcloud(){
 	docker run --rm -it \
 		-v "${HOME}/.gcloud:/root/.config/gcloud" \
@@ -348,20 +205,6 @@ gimp(){
 		--name gimp \
 		${DOCKER_REPO_PREFIX}/gimp
 }
-gitsome(){
-	docker run --rm -it \
-		-v /etc/localtime:/etc/localtime:ro \
-		--name gitsome \
-		--hostname gitsome \
-		-v "${HOME}/.gitsomeconfig:/home/anon/.gitsomeconfig" \
-		-v "${HOME}/.gitsomeconfigurl:/home/anon/.gitsomeconfigurl" \
-		${DOCKER_REPO_PREFIX}/gitsome
-}
-hollywood(){
-	docker run --rm -it \
-		--name hollywood \
-		${DOCKER_REPO_PREFIX}/hollywood
-}
 htop(){
 	if [[ -n "$(which htop)" ]]; then
 		"$(which htop)" "$@"
@@ -380,39 +223,6 @@ htpasswd(){
 		--log-driver none \
 		${DOCKER_REPO_PREFIX}/htpasswd "$@"
 }
-http(){
-	docker run -t --rm \
-		-v /var/run/docker.sock:/var/run/docker.sock \
-		--log-driver none \
-		${DOCKER_REPO_PREFIX}/httpie "$@"
-}
-imagemin(){
-	local image=$1
-	local extension="${image##*.}"
-	local filename="${image%.*}"
-
-	docker run --rm -it \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v "${HOME}/Pictures:/root/Pictures" \
-		${DOCKER_REPO_PREFIX}/imagemin sh -c "imagemin /root/Pictures/${image} > /root/Pictures/${filename}_min.${extension}"
-}
-irssi() {
-	del_stopped irssi
-	# relies_on notify_osd
-
-	docker run --rm -it \
-		--user root \
-		-v "${HOME}/.irssi:/home/user/.irssi" \
-		${DOCKER_REPO_PREFIX}/irssi \
-		chown -R user /home/user/.irssi
-
-	docker run --rm -it \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v "${HOME}/.irssi:/home/user/.irssi" \
-		--read-only \
-		--name irssi \
-		${DOCKER_REPO_PREFIX}/irssi
-}
 john(){
 	local file
 	file=$(realpath "$1")
@@ -420,14 +230,6 @@ john(){
 	docker run --rm -it \
 		-v "${file}:/root/$(basename "${file}")" \
 		${DOCKER_REPO_PREFIX}/john "$@"
-}
-kernel_builder(){
-	docker run --rm -it \
-		-v /usr/src:/usr/src \
-		-v /lib/modules:/lib/modules \
-		-v /boot:/boot \
-		--name kernel-builder \
-		${DOCKER_REPO_PREFIX}/kernel-builder
 }
 keypassxc(){
 	del_stopped keypassxc
@@ -440,46 +242,6 @@ keypassxc(){
 		-v /etc/machine-id:/etc/machine-id:ro \
 		--name keypassxc \
 		${DOCKER_REPO_PREFIX}/keepassxc
-}
-kicad(){
-	del_stopped kicad
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e "DISPLAY=unix${DISPLAY}" \
-		-v "${HOME}/kicad:/root/kicad" \
-		-v "${HOME}/.cache/kicad:/root/.cache/kicad" \
-		-v "${HOME}/.config/kicad:/root/.config/kicad" \
-		-e QT_DEVICE_PIXEL_RATIO \
-		-e GDK_SCALE \
-		-e GDK_DPI_SCALE \
-		--device /dev/dri \
-		--name kicad \
-		${DOCKER_REPO_PREFIX}/kicad
-}
-kvm(){
-	del_stopped kvm
-	relies_on pulseaudio
-
-	# modprobe the module
-	modprobe kvm
-
-	docker run -d \
-		--tmpfs /var/run \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-v "${HOME}/kvm:/root/kvm" \
-		-e "DISPLAY=unix${DISPLAY}" \
-		-e GDK_SCALE \
-		-e GDK_DPI_SCALE \
-		-e QT_DEVICE_PIXEL_RATIO \
-		--link pulseaudio:pulseaudio \
-		-e PULSE_SERVER=pulseaudio \
-		--group-add audio \
-		--name kvm \
-		--privileged \
-		${DOCKER_REPO_PREFIX}/kvm
 }
 libreoffice(){
 	del_stopped libreoffice
@@ -517,16 +279,6 @@ masscan(){
 		--name masscan \
 		${DOCKER_REPO_PREFIX}/masscan "$@"
 }
-mc(){
-	cwd="$(pwd)"
-	name="$(basename "$cwd")"
-
-	docker run --rm -it \
-		--log-driver none \
-		-v "${cwd}:/home/mc/${name}" \
-		--workdir "/home/mc/${name}" \
-		${DOCKER_REPO_PREFIX}/mc "$@"
-}
 mpd(){
 	del_stopped mpd
 
@@ -542,45 +294,6 @@ mpd(){
 		-v "${HOME}/.mpd.conf:/etc/mpd.conf" \
 		--name mpd \
 		${DOCKER_REPO_PREFIX}/mpd
-}
-mutt(){
-	# subshell so we dont overwrite variables
-	(
-	local account=$1
-	export IMAP_SERVER
-	export SMTP_SERVER
-
-	if [[ "$account" == "riseup" ]]; then
-		export GMAIL=$MAIL_RISEUP
-		export GMAIL_NAME=$MAIL_RISEUP_NAME
-		export GMAIL_PASS=$MAIL_RISEUP_PASS
-		export GMAIL_FROM=$MAIL_RISEUP_FROM
-		IMAP_SERVER=mail.riseup.net
-		SMTP_SERVER=$IMAP_SERVER
-	fi
-
-	docker run -it --rm \
-		-e GMAIL \
-		-e GMAIL_NAME \
-		-e GMAIL_PASS \
-		-e GMAIL_FROM \
-		-e GPG_ID \
-		-e IMAP_SERVER \
-		-e SMTP_SERVER \
-		-v "${HOME}/.gnupg:/home/user/.gnupg:ro" \
-		-v /etc/localtime:/etc/localtime:ro \
-		--name "mutt-${account}" \
-		${DOCKER_REPO_PREFIX}/mutt
-	)
-}
-ncmpc(){
-	del_stopped ncmpc
-
-	docker run --rm -it \
-		-v "${HOME}/.mpd/socket:/var/run/mpd/socket" \
-		-e MPD_HOST=/var/run/mpd/socket \
-		--name ncmpc \
-		${DOCKER_REPO_PREFIX}/ncmpc "$@"
 }
 neoman(){
 	del_stopped neoman
@@ -653,72 +366,6 @@ notify_send(){
 	local args=${*:2}
 	docker exec -i notify_osd notify-send "$1" "${args}"
 }
-now(){
-	docker run -it --rm \
-		-v "${HOME}/.now:/root/.now" \
-		-v "$(pwd):/usr/src/repo:ro" \
-		--workdir /usr/src/repo \
-		--log-driver none \
-		${DOCKER_REPO_PREFIX}/now "$@"
-}
-openscad(){
-	del_stopped openscad
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e "DISPLAY=unix${DISPLAY}" \
-		-v "${HOME}/openscad:/root/openscad" \
-		-v "${HOME}/.config/OpenSCAD:/root/.config/OpenSCAD" \
-		-e QT_DEVICE_PIXEL_RATIO \
-		-e GDK_SCALE \
-		-e GDK_DPI_SCALE \
-		--device /dev/dri \
-		--name openscad \
-		${DOCKER_REPO_PREFIX}/openscad
-}
-opensnitch(){
-	del_stopped opensnitchd
-	del_stopped opensnitch
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		--net host \
-		--cap-add NET_ADMIN \
-		-v /etc/machine-id:/etc/machine-id:ro \
-		-v /var/run/dbus:/var/run/dbus \
-		-v /usr/share/dbus-1:/usr/share/dbus-1 \
-		-v "/var/run/user/$(id -u):/var/run/user/$(id -u)" \
-		-e DBUS_SESSION_BUS_ADDRESS \
-		-e XAUTHORITY \
-		-v "${HOME}/.Xauthority:$HOME/.Xauthority" \
-		-v /tmp:/tmp \
-		--name opensnitchd \
-		${DOCKER_REPO_PREFIX}/opensnitchd
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e "DISPLAY=unix${DISPLAY}" \
-		-v /usr/share/X11:/usr/share/X11:ro \
-		-v /usr/share/dbus-1:/usr/share/dbus-1 \
-		-v /etc/machine-id:/etc/machine-id:ro \
-		-v /var/run/dbus:/var/run/dbus \
-		-v "/var/run/user/$(id -u):/var/run/user/$(id -u)" \
-		-e DBUS_SESSION_BUS_ADDRESS \
-		-e XAUTHORITY \
-		-v "${HOME}/.Xauthority:$HOME/.Xauthority" \
-		-e HOME \
-		-e QT_DEVICE_PIXEL_RATIO \
-		-e XDG_RUNTIME_DIR \
-		-v /etc/passwd:/etc/passwd:ro \
-		-v /etc/group:/etc/group:ro \
-		-v /tmp:/tmp \
-		-u "$(id -u)" -w "$HOME" \
-		--net host \
-		--name opensnitch \
-		${DOCKER_REPO_PREFIX}/opensnitch
-}
 osquery(){
 	rmctr osquery
 
@@ -782,15 +429,6 @@ pivman(){
 		--name pivman \
 		${DOCKER_REPO_PREFIX}/pivman
 }
-pms(){
-	del_stopped pms
-
-	docker run --rm -it \
-		-v "${HOME}/.mpd/socket:/var/run/mpd/socket" \
-		-e MPD_HOST=/var/run/mpd/socket \
-		--name pms \
-		${DOCKER_REPO_PREFIX}/pms "$@"
-}
 pond(){
 	del_stopped pond
 	relies_on torproxy
@@ -799,20 +437,6 @@ pond(){
 		--net container:torproxy \
 		--name pond \
 		${DOCKER_REPO_PREFIX}/pond
-}
-privoxy(){
-	del_stopped privoxy
-	relies_on torproxy
-
-	docker run -d \
-		--restart always \
-		--link torproxy:torproxy \
-		-v /etc/localtime:/etc/localtime:ro \
-		-p 8118:8118 \
-		--name privoxy \
-		${DOCKER_REPO_PREFIX}/privoxy
-
-	hostess add privoxy "$(docker inspect --format '{{.NetworkSettings.Networks.bridge.IPAddress}}' privoxy)"
 }
 pulseaudio(){
 	del_stopped pulseaudio
@@ -825,23 +449,6 @@ pulseaudio(){
 		--group-add audio \
 		--name pulseaudio \
 		${DOCKER_REPO_PREFIX}/pulseaudio
-}
-rainbowstream(){
-	docker run -it --rm \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v "${HOME}/.rainbow_oauth:/root/.rainbow_oauth" \
-		-v "${HOME}/.rainbow_config.json:/root/.rainbow_config.json" \
-		--name rainbowstream \
-		${DOCKER_REPO_PREFIX}/rainbowstream
-}
-registrator(){
-	del_stopped registrator
-
-	docker run -d --restart always \
-		-v /var/run/docker.sock:/tmp/docker.sock \
-		--net host \
-		--name registrator \
-		gliderlabs/registrator consul:
 }
 remmina(){
 	del_stopped remmina
@@ -856,98 +463,6 @@ remmina(){
 		--name remmina \
 		--net host \
 		${DOCKER_REPO_PREFIX}/remmina
-}
-ricochet(){
-	del_stopped ricochet
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e "DISPLAY=unix${DISPLAY}" \
-		-e GDK_SCALE \
-		-e GDK_DPI_SCALE \
-		-e QT_DEVICE_PIXEL_RATIO \
-		--device /dev/dri \
-		--name ricochet \
-		${DOCKER_REPO_PREFIX}/ricochet
-}
-rstudio(){
-	del_stopped rstudio
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-v "${HOME}/fastly-logs:/root/fastly-logs" \
-		-v /dev/shm:/dev/shm \
-		-e "DISPLAY=unix${DISPLAY}" \
-		-e QT_DEVICE_PIXEL_RATIO \
-		--device /dev/dri \
-		--name rstudio \
-		${DOCKER_REPO_PREFIX}/rstudio
-}
-s3cmdocker(){
-	del_stopped s3cmd
-
-	docker run --rm -it \
-		-e AWS_ACCESS_KEY="${DOCKER_AWS_ACCESS_KEY}" \
-		-e AWS_SECRET_KEY="${DOCKER_AWS_ACCESS_SECRET}" \
-		-v "$(pwd):/root/s3cmd-workspace" \
-		--name s3cmd \
-		${DOCKER_REPO_PREFIX}/s3cmd "$@"
-}
-scudcloud(){
-	del_stopped scudcloud
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e "DISPLAY=unix${DISPLAY}" \
-		-v /etc/machine-id:/etc/machine-id:ro \
-		-v /var/run/dbus:/var/run/dbus \
-		-v "/var/run/user/$(id -u):/var/run/user/$(id -u)" \
-		-e TERM \
-		-e XAUTHORITY \
-		-e DBUS_SESSION_BUS_ADDRESS \
-		-e HOME \
-		-e QT_DEVICE_PIXEL_RATIO \
-		-v /etc/passwd:/etc/passwd:ro \
-		-v /etc/group:/etc/group:ro \
-		-u "$(whoami)" -w "$HOME" \
-		-v "${HOME}/.Xauthority:$HOME/.Xauthority" \
-		-v "${HOME}/.scudcloud:/home/jessie/.config/scudcloud" \
-		--device /dev/snd \
-		--name scudcloud \
-		${DOCKER_REPO_PREFIX}/scudcloud
-
-	# exit current shell
-	exit 0
-}
-shorewall(){
-	del_stopped shorewall
-
-	docker run --rm -it \
-		--net host \
-		--cap-add NET_ADMIN \
-		--privileged \
-		--name shorewall \
-		${DOCKER_REPO_PREFIX}/shorewall "$@"
-}
-skype(){
-	del_stopped skype
-	relies_on pulseaudio
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e "DISPLAY=unix${DISPLAY}" \
-		--link pulseaudio:pulseaudio \
-		-e PULSE_SERVER=pulseaudio \
-		--security-opt seccomp:unconfined \
-		--device /dev/video0 \
-		--group-add video \
-		--group-add audio \
-		--name skype \
-		${DOCKER_REPO_PREFIX}/skype
 }
 slack(){
 	del_stopped slack
@@ -966,31 +481,6 @@ slack(){
 		--name slack \
 		${DOCKER_REPO_PREFIX}/slack "$@"
 }
-spotify(){
-	del_stopped spotify
-
-	docker run -d \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /tmp/.X11-unix:/tmp/.X11-unix \
-		-e "DISPLAY=unix${DISPLAY}" \
-		-e QT_DEVICE_PIXEL_RATIO \
-		--security-opt seccomp:unconfined \
-		--device /dev/snd \
-		--device /dev/dri \
-		--group-add audio \
-		--group-add video \
-		--name spotify \
-		${DOCKER_REPO_PREFIX}/spotify
-}
-ssh2john(){
-	local file
-	file=$(realpath "$1")
-
-	docker run --rm -it \
-		-v "${file}:/root/$(basename "${file}")" \
-		--entrypoint ssh2john \
-		${DOCKER_REPO_PREFIX}/john "$@"
-}
 sshb0t(){
 	del_stopped sshb0t
 
@@ -1002,7 +492,7 @@ sshb0t(){
 		touch "${HOME}/.ssh/authorized_keys"
 	fi
 
-	GITHUB_USER=${GITHUB_USER:=jessfraz}
+	GITHUB_USER=${GITHUB_USER:=man715}
 
 	docker run --rm -it \
 		--name sshb0t \
@@ -1027,23 +517,12 @@ steam(){
 		--name steam \
 		${DOCKER_REPO_PREFIX}/steam
 }
-t(){
-	docker run -t --rm \
-		-v "${HOME}/.trc:/root/.trc" \
-		--log-driver none \
-		${DOCKER_REPO_PREFIX}/t "$@"
-}
 tarsnap(){
 	docker run --rm -it \
 		-v "${HOME}/.tarsnaprc:/root/.tarsnaprc" \
 		-v "${HOME}/.tarsnap:/root/.tarsnap" \
 		-v "$HOME:/root/workdir" \
 		${DOCKER_REPO_PREFIX}/tarsnap "$@"
-}
-telnet(){
-	docker run -it --rm \
-		--log-driver none \
-		${DOCKER_REPO_PREFIX}/telnet "$@"
 }
 termboy(){
 	del_stopped termboy
@@ -1054,34 +533,26 @@ termboy(){
 		--name termboy \
 		${DOCKER_REPO_PREFIX}/nes "/games/${game}.rom"
 }
-terraform(){
-	if [[ -n "$(which terraform)" ]]; then
-		"$(which terraform)" "$@"
-	else
-		docker run -it --rm \
-			-v "${HOME}:${HOME}:ro" \
-			-v "$(pwd):/usr/src/repo" \
-			-v /tmp:/tmp \
-			--workdir /usr/src/repo \
-			--log-driver none \
-			-e GOOGLE_APPLICATION_CREDENTIALS \
-			-e SSH_AUTH_SOCK \
-			${DOCKER_REPO_PREFIX}/terraform "$@"
-	fi
-}
-tor(){
-	del_stopped tor
+torbridge(){
+	del_stopped torbridge
 
 	docker run -d \
+        --rm \
 		--net host \
-		--name tor \
-		${DOCKER_REPO_PREFIX}/tor
+		--name torbridge \
+		man715/tor-bridge
 
 	# set up the redirect iptables rules
 	sudo setup-tor-iptables
 
 	# validate we are running through tor
 	browser-exec "https://check.torproject.org/"
+}
+stoptorbridge() {
+    sudo setup-tor-iptables
+
+    docker stop torbridge
+
 }
 torbrowser(){
 	del_stopped torbrowser
@@ -1146,26 +617,8 @@ transmission(){
 		${DOCKER_REPO_PREFIX}/transmission
 
 
-	hostess add transmission "$(docker inspect --format '{{.NetworkSettings.Networks.bridge.IPAddress}}' transmission)"
+	sudo hostess add transmission "$(docker inspect --format '{{.NetworkSettings.Networks.bridge.IPAddress}}' transmission)"
 	browser-exec "http://transmission:9091"
-}
-travis(){
-	docker run -it --rm \
-		-v "${HOME}/.travis:/root/.travis" \
-		-v "$(pwd):/usr/src/repo:ro" \
-		--workdir /usr/src/repo \
-		--log-driver none \
-		${DOCKER_REPO_PREFIX}/travis "$@"
-}
-virsh(){
-	relies_on kvm
-
-	docker run -it --rm \
-		-v /etc/localtime:/etc/localtime:ro \
-		-v /run/libvirt:/var/run/libvirt \
-		--log-driver none \
-		--net container:kvm \
-		${DOCKER_REPO_PREFIX}/libvirt-client "$@"
 }
 virtualbox(){
 	del_stopped virtualbox

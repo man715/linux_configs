@@ -7,3 +7,9 @@ o() {
 		xdg-open "$@" > /dev/null 2>&1
 	fi
 }
+
+# Create a new directory and enter it
+mkd() {
+    mkdir "$@"
+    cd "$@" || exit
+}
